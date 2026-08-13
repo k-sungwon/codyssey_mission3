@@ -57,6 +57,42 @@ flowchart LR
     Generator --> Models
 ```
 
+## 모드별 워크플로우
+
+```mermaid
+flowchart LR
+    Start["main.py\nApplication.run()"] --> Menu["메뉴 선택\napplication.py"]
+
+    Menu --> Mode1["Mode 1\n수동 입력"]
+    Mode1 --> M1Input["행렬 입력\ninput.py"]
+    M1Input --> M1Validate["행 단위 파싱과 검증\ninput.py / helpers.py"]
+    M1Validate --> M1Objects["Filter / Pattern 생성\nmodels.py"]
+    M1Objects --> M1Calc["MAC 계산\nBasicMacCalculator"]
+    M1Calc --> M1Judge["점수 비교와 판정\nhelpers.classify()"]
+    M1Judge --> M1Perf["10회 평균 측정\nPerformanceAnalyzer"]
+    M1Perf --> M1Output["결과 출력\nConsoleReporter"]
+
+    Menu --> Mode2["Mode 2\nJSON 입력"]
+    Mode2 --> M2Load["data.json 읽기\nDataLoader"]
+    M2Load --> M2Objects["Filter / Pattern 생성\nLoadedData"]
+    M2Load --> M2Invalid["잘못된 케이스 기록\nMatchResult FAIL"]
+    M2Objects --> M2Calc["케이스별 MAC 계산\nBasicMacCalculator"]
+    M2Calc --> M2Judge["예측 라벨과 expected 비교\nhelpers.classify()"]
+    M2Judge --> M2Perf["크기별 성능 측정\nPerformanceAnalyzer"]
+    M2Invalid --> M2Summary["전체 요약 출력\nConsoleReporter"]
+    M2Perf --> M2Summary
+
+    Menu --> Mode3["Mode 3\n자동 패턴 생성"]
+    Mode3 --> M3Choice["크기와 라벨 입력\napplication.py"]
+    M3Choice --> M3Generate["Cross / X 생성\nhelpers.py"]
+    M3Generate --> M3Objects["Filter / Pattern 생성\nmodels.py"]
+    M3Objects --> M3Basic["2D MAC 계산\nBasicMacCalculator"]
+    M3Objects --> M3Flat["Flat MAC 계산\nOptimizedMacCalculator"]
+    M3Basic --> M3Compare["계산 결과와 시간 비교\nPerformanceAnalyzer"]
+    M3Flat --> M3Compare
+    M3Compare --> M3Output["결과 출력\nConsoleReporter"]
+```
+
 ## 파일별 책임
 
 | 파일 | 주요 책임 |
