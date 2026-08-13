@@ -12,13 +12,13 @@ tiny_mac_cal/
 |- mini_npu/                       # Application package
 |  |
 |  |- __init__.py                  # Marks this folder as a Python package
-|  |- application.py               # Overall mode 1 / mode 2 flow coordinator
+|  |- application.py               # Mode 1 / 2 / 3 flow coordinator
 |  |- input.py                     # Console row parsing and matrix input retry
 |  |- reporter.py                  # All formatted console output
 |  |- loader.py                    # data.json reading, validation, object creation
 |  |- models.py                    # Filter, Pattern, MatchResult data objects
 |  |- helpers.py                   # Stateless validation, labeling, classification,
-|  |                               # flattening, and bonus pattern generators
+|  |                               # flattening, and Cross/X pattern generators
 |  |- calculators.py               # 2D and Flat MAC calculation strategies
 |  |- performance.py               # 10-run average timing measurement
 |
@@ -43,6 +43,7 @@ tiny_mac_cal/
 flowchart TD
     Main["main.py"] --> App["Application\napplication.py"]
     App --> Input["input.py\nMode 1 matrix input"]
+    App --> Generator["helpers.py\nMode 3 Cross/X generation"]
     App --> Loader["DataLoader\nloader.py"]
     App --> Reporter["ConsoleReporter\nreporter.py"]
     App --> Basic["BasicMacCalculator\ncalculators.py"]
@@ -54,6 +55,7 @@ flowchart TD
     Flat --> Models
     App --> Result["MatchResult\nmodels.py"]
     App --> Helpers["helpers.py\nclassify and validation"]
+    Generator --> Models
 ```
 
 ## Responsibility Summary
@@ -61,12 +63,12 @@ flowchart TD
 | File | Main responsibility |
 | --- | --- |
 | `main.py` | Starts the application. |
-| `application.py` | Selects a mode, coordinates collaborators, and builds one `MatchResult` per pattern. |
+| `application.py` | Selects a mode, coordinates collaborators, and builds one `MatchResult` per pattern. Mode 3 reuses generated matrices. |
 | `models.py` | Holds domain state only; it does not calculate or print. |
 | `calculators.py` | Calculates a MAC score. `Basic` uses `matrix[row][column]`; `Optimized` uses a flat 1D list. |
 | `performance.py` | Times only calculation calls at least ten times and computes the average milliseconds. |
 | `loader.py` | Loads JSON. Whole-file errors stop mode 2; invalid individual cases become failures. |
 | `input.py` | Reads one matrix row at a time and repeats only an invalid row. |
-| `helpers.py` | Contains dependency-free logic: matrix checks, label normalization, epsilon decision, and generators. |
+| `helpers.py` | Contains dependency-free logic: matrix checks, label normalization, epsilon decision, and Cross/X generators. Even Cross uses two middle rows and columns. |
 | `reporter.py` | Collects all user-facing console formats in one place. |
 | `tests/` | Proves the behavior of each responsibility independently and through application flow. |

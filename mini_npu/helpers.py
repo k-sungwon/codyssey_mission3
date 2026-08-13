@@ -44,9 +44,9 @@ def flatten_matrix(matrix: List[List[float]]) -> List[float]:
 def generate_cross_pattern(size: int) -> List[List[float]]:
     if size <= 0:
         raise ValueError("size must be positive")
-    center = size // 2
+    centers = _center_indices(size)
     return [
-        [1.0 if row == center or column == center else 0.0 for column in range(size)]
+        [1.0 if row in centers or column in centers else 0.0 for column in range(size)]
         for row in range(size)
     ]
 
@@ -58,6 +58,12 @@ def generate_x_pattern(size: int) -> List[List[float]]:
         [1.0 if row == column or row + column == size - 1 else 0.0 for column in range(size)]
         for row in range(size)
     ]
+
+
+def _center_indices(size: int) -> set:
+    if size % 2:
+        return {size // 2}
+    return {size // 2 - 1, size // 2}
 
 
 def classify(scores: Dict[str, float], epsilon: float = EPSILON) -> str:

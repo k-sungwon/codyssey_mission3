@@ -47,6 +47,17 @@ class HelperTests(unittest.TestCase):
             generate_x_pattern(3), [[1.0, 0.0, 1.0], [0.0, 1.0, 0.0], [1.0, 0.0, 1.0]]
         )
 
+    def test_even_cross_generator_uses_two_middle_rows_and_columns(self):
+        self.assertEqual(
+            generate_cross_pattern(4),
+            [
+                [0.0, 1.0, 1.0, 0.0],
+                [1.0, 1.0, 1.0, 1.0],
+                [1.0, 1.0, 1.0, 1.0],
+                [0.0, 1.0, 1.0, 0.0],
+            ],
+        )
+
     def test_classify_returns_top_label(self):
         self.assertEqual(classify({"A": 9.0, "B": 2.0}), "A")
 

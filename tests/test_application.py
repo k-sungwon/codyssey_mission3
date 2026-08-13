@@ -39,6 +39,23 @@ class ApplicationTests(unittest.TestCase):
         self.assertEqual(summary, {"total": 2, "passed": 1, "failed": 1})
         self.assertTrue(any("SUMMARY" in line for line in output))
 
+    def test_generated_case_reuses_generated_cross_and_x_matrices(self):
+        app = Application(output_func=lambda _: None)
+
+        pattern, filters = app.build_generated_case(4, "Cross")
+
+        self.assertEqual(pattern.size, 4)
+        self.assertEqual(pattern.matrix, filters["Cross"].matrix)
+        self.assertEqual(
+            filters["Cross"].matrix,
+            [
+                [0.0, 1.0, 1.0, 0.0],
+                [1.0, 1.0, 1.0, 1.0],
+                [1.0, 1.0, 1.0, 1.0],
+                [0.0, 1.0, 1.0, 0.0],
+            ],
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
