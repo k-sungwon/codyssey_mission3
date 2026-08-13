@@ -26,9 +26,10 @@ class ConsoleReporter:
     def report_measurements(self, measurements: Iterable[Tuple[str, object]]) -> None:
         for filter_label, measurement in measurements:
             self.output_func(
-                "PERFORMANCE | {0} | filter={1} | {2}x{2} | {3:.6f} ms | {4} MACs".format(
+                "PERFORMANCE | {0} | filter={1} | score={2:.6f} | {3}x{3} | {4:.6f} ms | {5} MACs".format(
                     measurement.calculator_name,
                     filter_label,
+                    measurement.score,
                     int(measurement.operation_count ** 0.5),
                     measurement.average_ms,
                     measurement.operation_count,
