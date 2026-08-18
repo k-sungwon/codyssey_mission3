@@ -42,6 +42,19 @@ class ConsoleReporter:
                 summary["total"], summary["passed"], summary["failed"]
             )
         )
+        for result in summary.get("failed_cases", []):
+            if result.reason:
+                self.output_func(
+                    "FAILED_CASE | case={0} | reason={1}".format(
+                        result.case_id, result.reason
+                    )
+                )
+            else:
+                self.output_func(
+                    "FAILED_CASE | case={0} | predicted={1} | expected={2}".format(
+                        result.case_id, result.predicted_label, result.expected_label
+                    )
+                )
 
     def report_error(self, message: str) -> None:
         self.output_func("ERROR | {0}".format(message))

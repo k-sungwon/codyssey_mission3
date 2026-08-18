@@ -64,6 +64,14 @@ main.py
 전체 실행 다이어그램과 파일별 책임은 [프로젝트 구조 문서](docs/project-structure.md)에서 확인할 수 있습니다.
 모드별 코드 호출 순서와 인자 흐름은 [코드 실행 흐름 가이드](docs/code-flow-guide.html)에서 확인할 수 있습니다.
 
+## 모드별 코드 플로우
+
+| 모드 | 시작 코드 | 주요 이동 경로 |
+| --- | --- | --- |
+| Mode 1 | [run_manual_mode](mini_npu/application.py#L48-L56) | [입력 파싱](mini_npu/input.py#L4-L28) -> [MAC 분석](mini_npu/application.py#L89-L104) -> [2D/Flat 측정](mini_npu/application.py#L121-L130) -> [출력](mini_npu/reporter.py#L10-L56) |
+| Mode 2 | [run_json_mode](mini_npu/application.py#L67-L87) | [JSON 로드](mini_npu/loader.py#L22-L85) -> [키/라벨 정규화](mini_npu/helpers.py#L24-L37) -> [MAC 분석](mini_npu/application.py#L89-L104) -> [요약 출력](mini_npu/reporter.py#L39-L56) |
+| Mode 3 | [run_generated_mode](mini_npu/application.py#L58-L65) | [크기/라벨 입력](mini_npu/application.py#L137-L154) -> [패턴 생성](mini_npu/application.py#L106-L119) -> [Cross/X 생성 함수](mini_npu/helpers.py#L44-L66) -> [성능 출력](mini_npu/reporter.py#L26-L37) |
+
 ## 테스트
 
 ```bash
@@ -89,3 +97,4 @@ python3 -m unittest discover -s tests -v
 - Flat 1D 방식은 반복문 모양이 1차원이지만 펼쳐진 리스트 길이가 N²이므로 이론적 시간 복잡도는 2D 방식과 같은 O(N²)입니다.
 - 공간 복잡도는 행렬 데이터를 저장하는 데 O(N²)이 필요하고, Flat 방식은 펼친 리스트를 만들기 때문에 추가 O(N²) 공간을 사용할 수 있습니다.
 - 콘솔 요약은 전체 케이스 수, 통과 수, 실패 수를 `SUMMARY | total=... | pass=... | fail=...` 형식으로 출력합니다.
+- 실패 케이스가 있으면 요약 뒤에 `FAILED_CASE | case=... | predicted=... | expected=...` 또는 `FAILED_CASE | case=... | reason=...` 형식으로 실패 목록을 출력합니다.

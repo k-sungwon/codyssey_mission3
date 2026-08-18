@@ -132,7 +132,13 @@ class Application:
     @staticmethod
     def _summarize(results: List[MatchResult]) -> dict:
         passed = sum(result.passed is True for result in results)
-        return {"total": len(results), "passed": passed, "failed": len(results) - passed}
+        failed_cases = [result for result in results if result.passed is not True]
+        return {
+            "total": len(results),
+            "passed": passed,
+            "failed": len(failed_cases),
+            "failed_cases": failed_cases,
+        }
 
     def _read_positive_size(self) -> int:
         while True:

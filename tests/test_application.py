@@ -36,8 +36,31 @@ class ApplicationTests(unittest.TestCase):
             output = []
             summary = Application(path, output_func=output.append).run_json_mode()
 
-        self.assertEqual(summary, {"total": 2, "passed": 1, "failed": 1})
+        self.assertEqual(summary["total"], 2)
+        self.assertEqual(summary["passed"], 1)
+        self.assertEqual(summary["failed"], 1)
+        self.assertEqual([case.case_id for case in summary["failed_cases"]], ["size_2_2"])
         self.assertTrue(any("SUMMARY" in line for line in output))
+
+    def test_run_json_mode_reports_failed_case_summary(self):
+        content = {
+            "filters": {"size_2": {"cross": [[1, 0], [0, 1]], "x": [[0, 1], [1, 0]]}},
+            "patterns": {
+                "size_2_1": {"input": [[0, 1], [1, 0]], "expected": "+"},
+                "size_2_2": {"input": [[1]], "expected": "x"},
+            },
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "data.json"
+            path.write_text(json.dumps(content), encoding="utf-8")
+            output = []
+            summary = Application(path, output_func=output.append).run_json_mode()
+
+        self.assertEqual(summary["failed"], 2)
+        self.assertTrue(any("FAILED_CASE | case=size_2_1" in line for line in output))
+        self.assertTrue(any("predicted=X | expected=Cross" in line for line in output))
+        self.assertTrue(any("FAILED_CASE | case=size_2_2" in line for line in output))
+        self.assertTrue(any("reason=pattern matrix size does not match its size key" in line for line in output))
 
     def test_generated_case_reuses_generated_cross_and_x_matrices(self):
         app = Application(output_func=lambda _: None)
